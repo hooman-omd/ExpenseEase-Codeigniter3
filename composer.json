@@ -12,7 +12,8 @@
 	},
 	"require": {
 		"php": ">=5.3.7",
-		"twig/twig": "^3.0"
+		"twig/twig": "^3.0",
+		"morilog/jalali": "^3.4"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"
