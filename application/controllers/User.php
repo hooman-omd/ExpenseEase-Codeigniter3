@@ -41,7 +41,7 @@ class User extends BaseController
 
         if ($this->form_validation->run() == FALSE) {
             $this->session->set_flashdata('errors', validation_errors());
-            redirect(base_url('User/index'));
+            redirect($_SERVER['HTTP_REFERER']);
         } else {
             $this->userModel->updateUser([
                 'name' => $this->input->post('name'),
@@ -49,7 +49,7 @@ class User extends BaseController
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
             $this->session->set_flashdata('success', 'اطلاعات کاربری بروزرسانی شدند');
-            redirect(base_url('User/index'));
+            redirect($_SERVER['HTTP_REFERER']);
         }
     }
 
@@ -84,20 +84,20 @@ class User extends BaseController
         if ($this->form_validation->run() == FALSE) {
 
             $this->session->set_flashdata('errors', validation_errors());
-            redirect(base_url('User/index'));
+            redirect($_SERVER['HTTP_REFERER']);
         } else {
 
             $userData = $this->userModel->getUser();
             if ($this->input->post('current_password') != $userData->password) {
                 $this->session->set_flashdata('errors', "رمزعبور وارد شده نامعتبر می باشد");
-                redirect(base_url('User/index'));
+                redirect($_SERVER['HTTP_REFERER']);
             }
 
             $this->userModel->updateUser([
                 'password' => $this->input->post('new_password'),
             ]);
             $this->session->set_flashdata('success', "رمزعبور بروزرسانی شد");
-            redirect(base_url('User/index'));
+            redirect($_SERVER['HTTP_REFERER']);
         }
     }
 }

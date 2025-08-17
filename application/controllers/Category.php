@@ -28,7 +28,7 @@ class Category extends BaseController{
 
         if ($this->form_validation->run() == FALSE) {
             $this->session->set_flashdata('errors', validation_errors());
-            redirect(base_url('Category/index'));
+            redirect($_SERVER['HTTP_REFERER']);
         }else{
             $message = "";
             if (!empty($this->input->post('category_id'))) {
@@ -40,7 +40,7 @@ class Category extends BaseController{
             }
 
             $this->session->set_flashdata('success', $message);
-            redirect(base_url('Category/index'));
+            redirect($_SERVER['HTTP_REFERER']);
         }
         
     }
@@ -48,6 +48,6 @@ class Category extends BaseController{
     public function delete_category(int $id){
         $this->categoryModel->deleteCategory($id);
         $this->session->set_flashdata('success','دسته بندی موردنظر حذف شد');
-        redirect(base_url('Category/index'));
+        redirect($_SERVER['HTTP_REFERER']);
     }
 }

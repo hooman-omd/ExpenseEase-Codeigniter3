@@ -43,6 +43,10 @@ class Twig
         $this->twig->addFunction(new TwigFunction('flash', function ($data = '') {
             return $this->CI->session->flashdata($data);
         }));
+
+        $this->twig->addFunction(new TwigFunction('json', function ($data = '') {
+            return json_encode($data);
+        }));
     }
 
     public function render($template, $data = [])
