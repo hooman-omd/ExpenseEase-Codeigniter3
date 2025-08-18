@@ -45,8 +45,7 @@ class User extends BaseController
         } else {
             $this->userModel->updateUser([
                 'name' => $this->input->post('name'),
-                'email' => $this->input->post('email'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'email' => $this->input->post('email')
             ]);
             $this->session->set_flashdata('success', 'اطلاعات کاربری بروزرسانی شدند');
             redirect($_SERVER['HTTP_REFERER']);

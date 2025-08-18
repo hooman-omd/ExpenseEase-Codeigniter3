@@ -3,7 +3,35 @@
 class Transaction_model extends CI_Model
 {
 
-    private $userId = 1;
+    private $userId;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->userId = $this->session->userdata('auth');
+    }
+
+    private function can(int $id){
+        $userId = $this->db->select('user_id')
+        ->from('transactions')
+        ->where('id',$id)
+        ->get()
+        ->row()
+        ->user_id;
+        if ($userId != $this->userId) {
+            show_error('شما مجوز دسترسی به این داده را ندارید',403);
+        }
+    }
+
+    public function getLastThree(){
+        $result = $this->db->select('title,amount,type')
+        ->from('transactions')
+        ->where('user_id',$this->userId)
+        ->limit(3,0)
+        ->order_by('created_at','desc')
+        ->get();
+        return $result->result();
+    }
 
     public function getTransactions(int|null $category_id = null, string|null $type = null, int|null $offset = 0, int $rowPerPage = 5)
     {
@@ -21,7 +49,7 @@ class Transaction_model extends CI_Model
             $this->db->where('type', $type);
         }
 
-        $this->db->limit($rowPerPage, $offset);
+        $this->db->limit($rowPerPage, $offset)->order_by('created_at','desc');
         $transactions = $this->db->get()->result();
 
         
@@ -57,12 +85,14 @@ class Transaction_model extends CI_Model
 
     public function updateTransaction(int $id, array $data)
     {
+        $this->can($id);
         $data['updated_at'] = date('Y-m-d H:i:s');
         $this->db->update('transactions', $data, ['id' => $id]);
     }
 
     public function deleteTransaction(int $id)
     {
+        $this->can($id);
         $this->db->delete('transactions', ['id' => $id]);
     }
 

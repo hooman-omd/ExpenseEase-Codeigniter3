@@ -28,8 +28,8 @@ class Transactions extends BaseController
         $data['totalRecords'] = $transactionData['total_records'];
         $data['offset'] = $transactionData['offset'];
 
-        $data['income'] = $sum['income'];
-        $data['expense'] = $sum['expense'];
+        $data['income'] = $sum['income']->amount ?? 0;
+        $data['expense'] = $sum['expense']->amount ?? 0;
         
         $this->twig->render('transaction.twig', $data);
     }
