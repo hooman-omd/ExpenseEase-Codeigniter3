@@ -30,6 +30,8 @@ class BaseController extends CI_Controller{
             $result = $this->sessionModel->hasSession($_COOKIE['token']);
             if ($result['status']) {
                 $this->session->set_userdata('auth',$result['user_id']);
+                $this->session->set_userdata('name',$result['name']);
+                $this->session->set_userdata('url',$result['url']);
                 return true;
             }
             return false;

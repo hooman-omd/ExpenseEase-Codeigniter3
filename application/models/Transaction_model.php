@@ -106,4 +106,15 @@ class Transaction_model extends CI_Model
 
         return ['income' => $income, 'expense' => $expense];
     }
+
+    public function getChartData(){
+        $data = $this->db->select("
+        (CASE WHEN type = 'income' THEN amount ELSE 0 END) as all_incomes,
+        (CASE WHEN type = 'expense' THEN amount ELSE 0 END) as all_expenses,
+        created_at")
+        ->from('transactions')
+        ->get()
+        ->result();
+        return $data;
+    }
 }

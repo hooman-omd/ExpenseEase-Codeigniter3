@@ -21,6 +21,13 @@ class Dashboard extends BaseController{
 
         $data['categories'] = $this->categoryModel->getCategories();
         $data['transactions'] = $this->transactionModel->getLastThree();
+
+        $dates = $this->transactionModel->getChartData();
+        $data['dates'] = array_column($dates, 'created_at');
+        $data['allIncomes'] = array_column($dates, 'all_incomes');
+        $data['allExpenses'] = array_column($dates, 'all_expenses');
+        
+
         $this->twig->render('dashboard.twig',$data);
     }
 }

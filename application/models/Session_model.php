@@ -28,9 +28,14 @@ class Session_model extends CI_Model{
         ->row();
 
         if ($result) {
-            return ['status'=>true,'user_id'=>$result->user_id];
+            $user = $this->db->select('name,profile_image_url')
+            ->from('users')
+            ->where('id',$result->user_id)
+            ->get()
+            ->row();
+            return ['status'=>true,'user_id'=>$result->user_id,'name'=>$user->name,'url'=>$user->profile_image_url];
         }
 
-        return ['status'=>false,'user_id'=>null];
+        return ['status'=>false,'user_id'=>null,'name'=>null,'url'=>null];
     } 
 }

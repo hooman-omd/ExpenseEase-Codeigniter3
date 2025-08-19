@@ -47,14 +47,10 @@
                     <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-semibold text-gray-800">روند درآمد و هزینه</h3>
-                            <select class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200">
-                                <option>ماه جاری</option>
-                                <option>ماه گذشته</option>
-                                <option>۳ ماه اخیر</option>
-                            </select>
+                            
                         </div>
-                        <div class="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                            [نمودار خطی اینجا قرار می‌گیرد]
+                        <div class="h-96 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <canvas id="chart-container" style="width:100%;max-width:600px;height:100%"></canvas>
                         </div>
                     </div>
 
@@ -121,4 +117,40 @@
                     </form>
                 </div>
             </div>
+            <script>
+                $(function(){
+                    const xValues =[
+                     {%for date in dates%}
+                        "{{toNum(jdate(date))}}",
+                     {% endfor %}
+                    ]
+
+                    new Chart("chart-container", {
+                        type: "line",
+                        data: {
+                          labels: xValues,
+                          datasets: [{
+                            data: [
+                                {%for income in allIncomes%}
+                                    "{{income}}",
+                                {% endfor %}
+                            ],
+                            borderColor: "blue",
+                            fill: false
+                          },{
+                            data: [
+                                {%for expense in allExpenses%}
+                                    "{{expense}}",
+                                {% endfor %}
+                            ],
+                            borderColor: "red",
+                            fill: false
+                          }]
+                        },
+                        options: {
+                          legend: {display: false}
+                        }
+                    });
+                });
+            </script>
 {% endblock %}

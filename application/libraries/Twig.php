@@ -44,6 +44,10 @@ class Twig
             return $this->CI->session->flashdata($data);
         }));
 
+        $this->twig->addFunction(new TwigFunction('session', function ($data = '') {
+            return $this->CI->session->userdata($data);
+        }));
+
         $this->twig->addFunction(new TwigFunction('json', function ($data = '') {
             return json_encode($data);
         }));

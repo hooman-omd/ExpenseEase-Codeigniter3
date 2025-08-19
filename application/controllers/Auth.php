@@ -112,6 +112,8 @@ class Auth extends CI_Controller
 
             if ($checkLogin['status']) {
                 $this->session->set_userdata('auth', $checkLogin['id']);
+                $this->session->set_userdata('name', $checkLogin['name']);
+                $this->session->set_userdata('url', $checkLogin['url']);
 
                 if ($this->input->post('remember-me') == 'on') {
                     $token = $this->createSessionToken();
@@ -133,7 +135,6 @@ class Auth extends CI_Controller
     public function logout()
     {
         if ($this->session->has_userdata('auth')) {
-            $this->session->unset_userdata('auth');
             $this->session->sess_destroy();
 
             $this->sessionModel->deletesession();
