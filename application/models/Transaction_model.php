@@ -113,6 +113,7 @@ class Transaction_model extends CI_Model
         (CASE WHEN type = 'expense' THEN amount ELSE 0 END) as all_expenses,
         created_at")
         ->from('transactions')
+        ->where('user_id',$this->userId)
         ->get()
         ->result();
         return $data;
