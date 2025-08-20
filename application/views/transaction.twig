@@ -165,21 +165,22 @@
 					</div>
 					<div>
 						<nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-							{# <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+							<button onclick="
+
+navigatePages(-1)" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
 							                            <span class="sr-only">قبلی</span>
 							                            <i class="fas fa-chevron-right"></i>
-							                        </a> #}
-							{# <a href="#" aria-current="page" class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
-							                            ۱
-							                        </a> #}
-								{%for i in range(1,pages)%}
-									<button onclick="goToPage({{i}})" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"> {{i}}
+							                        </button>
+								{%for i in pages%}
+									<button onclick="goToPage({{i}})" class="{{i==currentPage ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium" : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"}}"> {{toNum(i)}}
 								</button>
 							{% endfor %}
-							{# <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+							<button onclick="
+
+navigatePages(1)" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
 							                            <span class="sr-only">بعدی</span>
 							                            <i class="fas fa-chevron-left"></i>
-							                        </a> #}
+							                        </button>
 						</nav>
 					</div>
 				</div>
@@ -303,27 +304,21 @@ window.location.href = deleteUrl;
 }
 });
 });
-
-// تابع کمکی برای یافتن ID دسته‌بندی بر اساس نام
-function getCategoryIdByName(name) {
-const categories = {
-'خرید': '1',
-'غذا': '2',
-'حمل و نقل': '3',
-'درآمد': '4'
-};
-return categories[name] || '1';
-}
-
-// فیلتر کردن تراکنش‌ها
-$('#categoryFilter, #typeFilter').change(function () { // در اینجا می‌توانید کد فیلتر کردن جدول را اضافه کنید
-console.log('فیلترها اعمال شدند');
-});
 });
 function goToPage(page) {
-const url = new URL(window.location.href);
-url.searchParams.set('page', page);
-window.location.href = url.toString();
+	const url = new URL(window.location.href);
+	url.searchParams.set('page', page);
+	window.location.href = url.toString();
+}
+
+function navigatePages(navigate){
+	const url = new URL(window.location.href);
+	let currentPage = url.searchParams.get('page') || 1;
+	let siblingPage = parseInt(currentPage)+navigate;
+	url.searchParams.set('page',siblingPage);
+	if(siblingPage >= 1 && siblingPage <= {{lastPage}}){
+		window.location.href = url.toString();
+	}
 }
 	</script>
 {% endblock %}

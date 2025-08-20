@@ -17,14 +17,28 @@ class Transactions extends BaseController
 
     public function index()
     {
+        $categoryId = $this->input->get('category_id');
+        $type = $this->input->get('type');
+        $page = $this->input->get('page') ?? 1;
+        
+
         $sum = $this->transactionModel->getSum();
         $data['categories'] = $this->categoryModel->getCategories();
 
-        $transactionData = $this->transactionModel->getTransactions($this->input->get('category_id'),$this->input->get('type'),$this->input->get('page'));
+        $transactionData = $this->transactionModel->getTransactions($categoryId,$type,$page);
         $data['transactions'] = $transactionData['transactions'];
         
         $data['currentRecords']= count($data['transactions']);
-        $data['pages'] = $transactionData['total_pages'];
+        $totalPages = $transactionData['total_pages'];
+        $range = 2;
+
+        $start = max(1, $page - $range);
+        $end   = min($totalPages, $page + $range);
+
+        $pages = range($start, $end);
+        $data['pages'] = $pages;
+        $data['lastPage'] = $totalPages;
+        $data['currentPage']= $page;
         $data['totalRecords'] = $transactionData['total_records'];
         $data['offset'] = $transactionData['offset'];
 

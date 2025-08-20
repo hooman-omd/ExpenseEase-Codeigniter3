@@ -11,33 +11,35 @@ class Transaction_model extends CI_Model
         $this->userId = $this->session->userdata('auth');
     }
 
-    private function can(int $id){
+    private function can(int $id)
+    {
         $userId = $this->db->select('user_id')
-        ->from('transactions')
-        ->where('id',$id)
-        ->get()
-        ->row()
-        ->user_id;
+            ->from('transactions')
+            ->where('id', $id)
+            ->get()
+            ->row()
+            ->user_id;
         if ($userId != $this->userId) {
-            show_error('شما مجوز دسترسی به این داده را ندارید',403);
+            show_error('شما مجوز دسترسی به این داده را ندارید', 403);
         }
     }
 
-    public function getLastThree(){
+    public function getLastThree()
+    {
         $result = $this->db->select('title,amount,type')
-        ->from('transactions')
-        ->where('user_id',$this->userId)
-        ->limit(3,0)
-        ->order_by('created_at','desc')
-        ->get();
+            ->from('transactions')
+            ->where('user_id', $this->userId)
+            ->limit(3, 0)
+            ->order_by('created_at', 'desc')
+            ->get();
         return $result->result();
     }
 
     public function getTransactions(int|null $category_id = null, string|null $type = null, int|null $offset = 0, int $rowPerPage = 5)
     {
-        $offset = $offset == 0 ? 0 : ($offset-1) * $rowPerPage;
+        $offset = $offset == 0 ? 0 : ($offset - 1) * $rowPerPage;
 
-        
+
         $this->db->select('transactions.*, categories.title as category_title')
             ->from('transactions')
             ->join('categories', 'transactions.category_id = categories.id AND categories.user_id = ' . $this->userId);
@@ -49,10 +51,10 @@ class Transaction_model extends CI_Model
             $this->db->where('type', $type);
         }
 
-        $this->db->limit($rowPerPage, $offset)->order_by('created_at','desc');
+        $this->db->limit($rowPerPage, $offset)->order_by('created_at', 'desc');
         $transactions = $this->db->get()->result();
 
-        
+
         $this->db->select('COUNT(transactions.id) as total', false)
             ->from('transactions')
             ->join('categories', 'transactions.category_id = categories.id AND categories.user_id = ' . $this->userId);
@@ -107,15 +109,30 @@ class Transaction_model extends CI_Model
         return ['income' => $income, 'expense' => $expense];
     }
 
-    public function getChartData(){
+    public function getChartData(int $k = 14)
+    {
+        // $data = $this->db->select("
+        // SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as all_incomes,
+        // SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as all_expenses,
+        // created_at")
+        // ->from('transactions')
+        // ->where('user_id',$this->userId)
+        // ->group_by('created_at')
+        // ->get()
+        // ->result();
         $data = $this->db->select("
-        (CASE WHEN type = 'income' THEN amount ELSE 0 END) as all_incomes,
-        (CASE WHEN type = 'expense' THEN amount ELSE 0 END) as all_expenses,
-        created_at")
-        ->from('transactions')
-        ->where('user_id',$this->userId)
-        ->get()
-        ->result();
+        DATE_FORMAT(created_at, '%Y-%m-%d') as txn_date,
+        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as all_incomes,
+        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as all_expenses
+        ")
+            ->from('transactions')
+            ->where('user_id', $this->userId)
+            ->where("created_at >=", "DATE_SUB(CURDATE(), INTERVAL {$k} DAY)", false)
+            ->group_by("DATE_FORMAT(created_at, '%Y-%m-%d')")
+            ->order_by('txn_date', 'ASC')
+            ->get()
+            ->result();
+
         return $data;
     }
 }

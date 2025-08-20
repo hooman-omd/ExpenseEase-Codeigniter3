@@ -101,9 +101,11 @@ class User extends BaseController
     }
 
     public function uploadProfileImage(){
+        $name = $this->session->userdata('name');
         $config['upload_path'] = "./uploads/profiles";
         $config['allowed_types'] = 'gif|jpg|png';
-        $config['file_name'] = $this->session->userdata('name').mt_rand(100000,999999);
+        $config['file_name'] = $name.mt_rand(100000,999999);
+        
         $this->load->library('upload', $config);
 
         $result = $this->upload->do_upload('profile_image');
@@ -111,7 +113,7 @@ class User extends BaseController
             $this->session->set_flashdata('errors',$this->upload->display_errors());
             redirect($_SERVER['HTTP_REFERER']);
         }else{
-            $url = base_url('/uploads/profiles/'.$this->upload->data()['file_name']);
+            $url = base_url('/uploads/profiles/'.$config['file_name']);
             $this->userModel->uploadProfileImage($url);
             $this->session->set_userdata('url',$url);
             $this->session->set_flashdata('success','تصویر جدید با موفقیت آپلود شد');

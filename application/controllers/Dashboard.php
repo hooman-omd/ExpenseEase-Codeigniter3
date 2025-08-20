@@ -23,7 +23,7 @@ class Dashboard extends BaseController{
         $data['transactions'] = $this->transactionModel->getLastThree();
 
         $dates = $this->transactionModel->getChartData();
-        $data['dates'] = array_column($dates, 'created_at');
+        $data['dates'] = array_column($dates, 'txn_date');
         $data['allIncomes'] = array_column($dates, 'all_incomes');
         $data['allExpenses'] = array_column($dates, 'all_expenses');
         
